@@ -1,5 +1,5 @@
 <template>
-  <JetstreamModal :show="modal != null" @close="close">
+  <JetstreamModal :show="modal != null" @close="close" :max-width="maxWidth">
     <component v-if="modal" :is="modal.component" v-bind="modal.page.props" />
   </JetstreamModal>
 </template>
@@ -19,12 +19,13 @@ export default {
   data() {
     return {
       modal: null,
+      maxWidth: '2xl'
     };
   },
 
   beforeMount() {
-    this.$inertia.visitInModal = (url, onSuccess) => {
-      this.visitInModal(url, onSuccess);
+    this.$inertia.visitInModal = (url, onSuccess, maxWidth) => {
+      this.visitInModal(url, onSuccess, maxWidth);
     };
 
     this.$inertia.on("success", (event) => {
@@ -46,7 +47,9 @@ export default {
       this.modal = null;
     },
 
-    visitInModal(url, onSuccess) {
+    visitInModal(url, onSuccess, maxWidth) {
+      this.maxWidth = maxWidth;
+
       let data = {};
 
       [url, data] = mergeDataIntoQueryString("get", hrefToUrl(url), {});
